@@ -1,0 +1,28 @@
+pkgname={{.Pkgname}}
+pkgver={{.Version}}
+pkgrel=1
+pkgdesc="Description here"
+url='{{.Url}}'
+arch=('any')
+license=('{{.License}}')
+depends=({{StringsJoin .Depends}})
+makedepends=('git' 'go-pie')
+source=('git+{{.Url}}#commit={{.Revision}}')
+sha256sums=('SKIP')
+{{if .Vendor}}
+prepare() {
+    cd {{.DirectoryName}}
+    rm -rf vendor/
+}
+{{end}}
+check(){
+    cd {{.DirectoryName}}
+    export GOPATH="$srcdir/build:/usr/share/gocode"
+    go test ./...
+}
+
+package() {
+    cd {{.DirectoryName}}
+    install -Dm0644 -t "$pkgdir"/usr/share/gocode/src/{{.Repo}} *
+    {{if .SpecialLicense}}install -Dm644 {{.LicenseFilename}} "$pkgdir/usr/share/licenses/$pkgname/{{.LicenseFilename}}"{{end}}
+}
