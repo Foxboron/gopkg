@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // Environment variables
@@ -29,15 +30,19 @@ func ExecBuild(args []string) {
 	// 	log.Fatal(err)
 	// }
 	gopath := "./gopkg_gopath"
+	path, err := filepath.Abs(gopath)
+	if err != nil {
+		log.Fatal(err)
+	}
 	gopkg := args[0]
-	pkg, err := CreatePkg(gopkg, gopath)
+	pkg, err := CreatePkg(gopkg, path)
 	if err != nil {
 		log.Fatal(err)
 	}
 	CreateTemplate(pkg, *IsProgram)
 
 	for pkgDep := range pkg.Depends {
-		pkg, err := CreatePkg(pkgDep, gopath)
+		pkg, err := CreatePkg(pkgDep, path)
 		if err != nil {
 			log.Fatal(err)
 		}

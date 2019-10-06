@@ -162,7 +162,7 @@ func (pkg *Gopkg) Exec(cmds ...string) (string, error) {
 	cmd.Dir = pkg.Dir
 	cmd.Env = append([]string{
 		"GO111MODULE=off",
-		"GOPATH=",
+		fmt.Sprintf("GOPATH=%s", pkg.Gopath),
 	})
 	if value, ok := os.LookupEnv("HOME"); ok {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", value))
